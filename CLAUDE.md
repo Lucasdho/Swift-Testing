@@ -11,7 +11,7 @@
 <!-- idea-to-spec registers each spec here. One row per spec. -->
 | Spec file | Domain | Status |
 |---|---|---|
-| (none yet) | | |
+| specs/store-spec.md | Store app (product model, navigation, cart, catalog, images) | v1.0 — settled |
 
 ## Claude Code notes
 - Unit tests use Swift Testing (`#expect`), not XCTest — don't migrate them to XCTest.

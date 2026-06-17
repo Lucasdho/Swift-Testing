@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
 # SessionStart hook: re-states the default skill gates every session.
 # It reminds, it does not enforce — the agent can still skip a gate with reason.
-cat <<'EOF'
-[agentic-kit · Swift/iOS] Always on: superpowers · ponytail · swift-dev.
+
+TIMESTAMP="$(date '+%Y-%m-%d %H:%M:%S')"
+PROJECT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+LOG="$HOME/.claude/agentic-kit.log"
+
+# Log to file
+echo "[$TIMESTAMP] SessionStart · $PROJECT" >> "$LOG"
+
+# Visible marker in chat
+cat <<EOF
+[agentic-kit · $TIMESTAMP] Swift/iOS gates loaded — project: $PROJECT
+Always on: superpowers · ponytail · swift-dev.
 Default gates (reminder, not enforced — skip only with reason):
 - Idea -> spec           -> idea-to-spec (write to specs/, register domain in CLAUDE.md)
 - Before ANY code        -> plan mode OR superpowers:brainstorming
@@ -13,5 +23,5 @@ Default gates (reminder, not enforced — skip only with reason):
 - Writing tests          -> swift-dev -> swift-testing-pro
 - Before "done"          -> subagents: superpowers:verification-before-completion + /code-review
 Read AGENTS.md -> Context.md if not already loaded. Durable decisions live in
-Claude Code's native auto-memory (MEMORY.md), not a file in the repo.
+Claude Code's native auto-memory, not a file in the repo.
 EOF
