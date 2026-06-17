@@ -1,0 +1,43 @@
+import Foundation
+
+actor EntityCache<T: Sendable> {
+    private struct CacheEntry {
+        let value: T
+        let timestamp: Date
+    }
+
+    private var storage: [String: CacheEntry] = [:]
+    private let expirationInterval: TimeInterval = 600 // 10 minutes
+
+    func get(_ id: String) -> T? {
+        guard let entry = storage[id] else {
+            print("❌ [EntityCache<\(String(describing: T.self))>] MISS for id: \(id)")
+            return nil
+        }
+
+        let elapsed = Date().timeIntervalSince(entry.timestamp)
+        if elapsed > expirationInterval {
+            storage.removeValue(forKey: id)
+            print("⏰ [EntityCache<\(String(describing: T.self))>] EXPIRED for id: \(id)")
+            return nil
+        }
+
+        print("✅ [EntityCache<\(String(describing: T.self))>] HIT for id: \(id)")
+        return entry.value
+    }
+
+    func set(_ value: T, for id: String) {
+        print("💾 [EntityCache<\(String(describing: T.self))>] SET for id: \(id) (TTL: 10m)")
+        storage[id] = CacheEntry(value: value, timestamp: Date())
+    }
+
+    func remove(_ id: String) {
+        print("🗑️ [EntityCache<\(String(describing: T.self))>] REMOVE for id: \(id)")
+        storage.removeValue(forKey: id)
+    }
+
+    func clear() {
+        print("🧹 [EntityCache<\(String(describing: T.self))>] CLEARED")
+        storage.removeAll()
+    }
+}
