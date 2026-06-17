@@ -3,30 +3,31 @@ import Foundation
 
 @Model
 final class CartItem {
-    // ponytail: three optionals instead of a protocol-typed relationship — SwiftData can't store existentials
+    var id: String
+    // ponytail: five optionals instead of a protocol-typed relationship — SwiftData can't store existentials
     @Relationship(deleteRule: .nullify) var painting: Painting?
-    @Relationship(deleteRule: .nullify) var artPiece: ArtPiece?
-    @Relationship(deleteRule: .nullify) var garment: Garment?
+    @Relationship(deleteRule: .nullify) var sculpture: Sculpture?
+    @Relationship(deleteRule: .nullify) var ceramic: Ceramic?
+    @Relationship(deleteRule: .nullify) var jewelry: Jewelry?
+    @Relationship(deleteRule: .nullify) var cloth: Cloth?
     var quantity: Int
     var addedAt: Date
 
-    var product: (any ProductDisplayable)? { painting ?? artPiece ?? garment }
+    var product: (any ProductDisplayable)? { painting ?? sculpture ?? ceramic ?? jewelry ?? cloth }
 
     init(painting: Painting, quantity: Int = 1) {
-        self.painting = painting
-        self.quantity = quantity
-        self.addedAt = .now
+        self.id = UUID().uuidString; self.painting = painting; self.quantity = quantity; self.addedAt = .now
     }
-
-    init(artPiece: ArtPiece, quantity: Int = 1) {
-        self.artPiece = artPiece
-        self.quantity = quantity
-        self.addedAt = .now
+    init(sculpture: Sculpture, quantity: Int = 1) {
+        self.id = UUID().uuidString; self.sculpture = sculpture; self.quantity = quantity; self.addedAt = .now
     }
-
-    init(garment: Garment, quantity: Int = 1) {
-        self.garment = garment
-        self.quantity = quantity
-        self.addedAt = .now
+    init(ceramic: Ceramic, quantity: Int = 1) {
+        self.id = UUID().uuidString; self.ceramic = ceramic; self.quantity = quantity; self.addedAt = .now
+    }
+    init(jewelry: Jewelry, quantity: Int = 1) {
+        self.id = UUID().uuidString; self.jewelry = jewelry; self.quantity = quantity; self.addedAt = .now
+    }
+    init(cloth: Cloth, quantity: Int = 1) {
+        self.id = UUID().uuidString; self.cloth = cloth; self.quantity = quantity; self.addedAt = .now
     }
 }

@@ -6,12 +6,14 @@ final class CartRepository: StoreRepository<CartItem> {
 
     func addOrIncrement(_ product: any ProductDisplayable) throws {
         let all = try fetchAll()
-        // find existing item for this product (in-memory — cart is small)
+        // ponytail: in-memory scan — cart is small
         let existing = all.first { item in
             switch product {
-            case let p as Painting:  return item.painting === p
-            case let a as ArtPiece:  return item.artPiece === a
-            case let g as Garment:   return item.garment === g
+            case let p as Painting:   return item.painting === p
+            case let s as Sculpture:  return item.sculpture === s
+            case let c as Ceramic:    return item.ceramic === c
+            case let j as Jewelry:    return item.jewelry === j
+            case let cl as Cloth:     return item.cloth === cl
             default: return false
             }
         }
@@ -21,9 +23,11 @@ final class CartRepository: StoreRepository<CartItem> {
         } else {
             let item: CartItem
             switch product {
-            case let p as Painting:  item = CartItem(painting: p)
-            case let a as ArtPiece:  item = CartItem(artPiece: a)
-            case let g as Garment:   item = CartItem(garment: g)
+            case let p as Painting:   item = CartItem(painting: p)
+            case let s as Sculpture:  item = CartItem(sculpture: s)
+            case let c as Ceramic:    item = CartItem(ceramic: c)
+            case let j as Jewelry:    item = CartItem(jewelry: j)
+            case let cl as Cloth:     item = CartItem(cloth: cl)
             default: throw DataLayerError.invalidModelType
             }
             try add(item)

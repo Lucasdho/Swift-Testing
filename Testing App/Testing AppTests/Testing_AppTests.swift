@@ -3,14 +3,17 @@ import SwiftData
 import Foundation
 @testable import Testing_App
 
+private let allModelTypes: [any PersistentModel.Type] = [
+    Painting.self, Sculpture.self, Ceramic.self, Jewelry.self, Cloth.self, CartItem.self, ImageModel.self
+]
+
 // MARK: — displayAttributes
 
 struct PaintingDisplayAttributesTests {
     let sut = Painting(name: "Test", price: 100, medium: "Oil", dimensions: "40x50", artist: "A. Artist")
 
     @Test func returnsCorrectLabels() {
-        let attrs = sut.displayAttributes()
-        #expect(attrs.map(\.label) == ["Medium", "Dimensions", "Artist"])
+        #expect(sut.displayAttributes().map(\.label) == ["Medium", "Dimensions", "Artist"])
     }
 
     @Test func returnsCorrectValues() {
@@ -21,33 +24,47 @@ struct PaintingDisplayAttributesTests {
     }
 }
 
-struct ArtPieceDisplayAttributesTests {
-    let sut = ArtPiece(name: "Test", price: 200, artType: "Print", artist: "B. Artist")
+struct SculptureDisplayAttributesTests {
+    let sut = Sculpture(name: "Test", price: 200, material: "Bronze", dimensions: "H 30 cm", artist: "B. Artist")
 
     @Test func returnsCorrectLabels() {
-        let attrs = sut.displayAttributes()
-        #expect(attrs.map(\.label) == ["Type", "Artist"])
+        #expect(sut.displayAttributes().map(\.label) == ["Material", "Dimensions", "Artist"])
     }
 
     @Test func returnsCorrectValues() {
         let attrs = sut.displayAttributes()
-        #expect(attrs[0].value == "Print")
-        #expect(attrs[1].value == "B. Artist")
+        #expect(attrs[0].value == "Bronze")
+        #expect(attrs[1].value == "H 30 cm")
+        #expect(attrs[2].value == "B. Artist")
     }
 }
 
-struct GarmentDisplayAttributesTests {
-    let sut = Garment(name: "Jacket", price: 80, clothingSize: "L", condition: .good, brand: "Brand X")
+struct CeramicDisplayAttributesTests {
+    let sut = Ceramic(name: "Bowl", price: 150, technique: "Wheel-thrown", glaze: "Celadon", artist: "C. Artist")
 
     @Test func returnsCorrectLabels() {
-        let attrs = sut.displayAttributes()
-        #expect(attrs.map(\.label) == ["Size", "Condition", "Brand"])
+        #expect(sut.displayAttributes().map(\.label) == ["Technique", "Glaze", "Artist"])
+    }
+}
+
+struct JewelryDisplayAttributesTests {
+    let sut = Jewelry(name: "Ring", price: 80, material: "Silver", jewelryType: "Ring", artist: "D. Artist")
+
+    @Test func returnsCorrectLabels() {
+        #expect(sut.displayAttributes().map(\.label) == ["Type", "Material", "Artist"])
+    }
+}
+
+struct ClothDisplayAttributesTests {
+    let sut = Cloth(name: "Jacket", price: 80, clothingSize: "L", condition: .good, brand: "Brand X")
+
+    @Test func returnsCorrectLabels() {
+        #expect(sut.displayAttributes().map(\.label) == ["Size", "Condition", "Brand"])
     }
 
     @Test func noBrandSkipsBrandRow() {
-        let garment = Garment(name: "Shirt", price: 40, clothingSize: "M", condition: .new, brand: "")
-        let attrs = garment.displayAttributes()
-        #expect(attrs.map(\.label) == ["Size", "Condition"])
+        let cloth = Cloth(name: "Shirt", price: 40, clothingSize: "M", condition: .new, brand: "")
+        #expect(cloth.displayAttributes().map(\.label) == ["Size", "Condition"])
     }
 }
 
@@ -59,10 +76,7 @@ struct PaintingRepositoryTests {
     let repo: PaintingRepository
 
     init() throws {
-        stack = try PersistenceStack(
-            modelTypes: [Painting.self, ArtPiece.self, Garment.self, CartItem.self, ImageModel.self],
-            isMemoryOnly: true
-        )
+        stack = try PersistenceStack(modelTypes: allModelTypes, isMemoryOnly: true)
         repo = try PaintingRepository(stack: stack)
     }
 
@@ -84,10 +98,7 @@ struct CartRepositoryTests {
     let cartRepo: CartRepository
 
     init() throws {
-        stack = try PersistenceStack(
-            modelTypes: [Painting.self, ArtPiece.self, Garment.self, CartItem.self, ImageModel.self],
-            isMemoryOnly: true
-        )
+        stack = try PersistenceStack(modelTypes: allModelTypes, isMemoryOnly: true)
         cartRepo = try CartRepository(stack: stack)
     }
 
@@ -120,13 +131,13 @@ struct CartRepositoryTests {
 
     @Test func totalPriceIsCorrect() throws {
         let p1 = Painting(name: "A", price: 100, medium: "Oil", dimensions: "10x10", artist: "X")
-        let g1 = Garment(name: "B", price: 50, clothingSize: "M", condition: .new)
+        let cl = Cloth(name: "B", price: 50, clothingSize: "M", condition: .new)
         stack.context?.insert(p1)
-        stack.context?.insert(g1)
+        stack.context?.insert(cl)
         try stack.context?.save()
 
         try cartRepo.addOrIncrement(p1)
-        try cartRepo.addOrIncrement(g1)
+        try cartRepo.addOrIncrement(cl)
         try cartRepo.addOrIncrement(p1) // quantity 2
 
         let total = try cartRepo.totalPrice()
@@ -134,11 +145,11 @@ struct CartRepositoryTests {
     }
 
     @Test func cartItemProductReturnsNonNilOptional() throws {
-        let painting = Painting(name: "X", price: 50, medium: "Oil", dimensions: "10x10", artist: "Y")
-        stack.context?.insert(painting)
+        let sculpture = Sculpture(name: "X", price: 50, material: "Bronze", dimensions: "H 10 cm", artist: "Y")
+        stack.context?.insert(sculpture)
         try stack.context?.save()
 
-        try cartRepo.addOrIncrement(painting)
+        try cartRepo.addOrIncrement(sculpture)
         let item = try #require(try cartRepo.fetchAll().first)
         #expect(item.product != nil)
         #expect(item.product?.name == "X")

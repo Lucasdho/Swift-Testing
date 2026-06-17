@@ -3,20 +3,26 @@ import SwiftData
 
 struct CatalogView: View {
     @Query private var paintings: [Painting]
-    @Query private var artPieces: [ArtPiece]
-    @Query private var garments: [Garment]
+    @Query private var sculptures: [Sculpture]
+    @Query private var ceramics: [Ceramic]
+    @Query private var jewelry: [Jewelry]
+    @Query private var cloths: [Cloth]
 
     @State private var selectedCategory: Category?
+    @State private var selectedProduct: (any ProductDisplayable)?
+
+    private var allProducts: [any ProductDisplayable] {
+        paintings + sculptures + ceramics + jewelry + cloths
+    }
 
     private var products: [any ProductDisplayable] {
-        let all: [any ProductDisplayable] = paintings + artPieces + garments
-        guard let category = selectedCategory else { return all }
-        return all.filter { $0.category == category }
+        guard let category = selectedCategory else { return allProducts }
+        return allProducts.filter { $0.category == category }
     }
 
     var body: some View {
         Group {
-            if paintings.isEmpty && artPieces.isEmpty && garments.isEmpty {
+            if allProducts.isEmpty {
                 emptyStore
             } else {
                 ScrollView {
@@ -31,9 +37,9 @@ struct CatalogView: View {
                                 columns: [GridItem(.adaptive(minimum: 160), spacing: 12)],
                                 spacing: 12
                             ) {
-                                ForEach(products, id: \.objectID) { product in
-                                    NavigationLink {
-                                        ProductDetailView(product: product)
+                                ForEach(products, id: \.id) { product in
+                                    Button {
+                                        selectedProduct = product
                                     } label: {
                                         ProductCardView(product: product)
                                     }
@@ -49,6 +55,14 @@ struct CatalogView: View {
         }
         .navigationTitle("Store")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: .init(
+            get: { selectedProduct != nil },
+            set: { if !$0 { selectedProduct = nil } }
+        )) {
+            if let product = selectedProduct {
+                ProductDetailView(product: product)
+            }
+        }
     }
 
     private var emptyStore: some View {

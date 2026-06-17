@@ -2,7 +2,7 @@ import SwiftData
 import Foundation
 
 @Model
-final class Painting: ProductDisplayable {
+final class Jewelry: ProductDisplayable {
     var id: String
     var name: String
     var price: Decimal
@@ -10,11 +10,11 @@ final class Painting: ProductDisplayable {
     var productDescription: String
     var createdAt: Date
 
-    var medium: String
-    var dimensions: String
+    var material: String
+    var jewelryType: String
     var artist: String
 
-    var category: Category { .painting }
+    var category: Category { .jewelry }
 
     init(
         id: String = UUID().uuidString,
@@ -22,8 +22,8 @@ final class Painting: ProductDisplayable {
         price: Decimal,
         imageURLs: [String] = [],
         productDescription: String = "",
-        medium: String,
-        dimensions: String,
+        material: String,
+        jewelryType: String,
         artist: String,
         createdAt: Date = .now
     ) {
@@ -32,13 +32,13 @@ final class Painting: ProductDisplayable {
         self.price = price
         self.imageURLs = imageURLs
         self.productDescription = productDescription
-        self.medium = medium
-        self.dimensions = dimensions
+        self.material = material
+        self.jewelryType = jewelryType
         self.artist = artist
         self.createdAt = createdAt
     }
 
     func displayAttributes() -> [(label: String, value: String)] {
-        [("Medium", medium), ("Dimensions", dimensions), ("Artist", artist)]
+        [("Type", jewelryType), ("Material", material), ("Artist", artist)]
     }
 }

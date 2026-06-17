@@ -4,25 +4,17 @@ import SwiftData
 struct CartView: View {
     @Query private var items: [CartItem]
     @Environment(DIContainer.self) private var di
-    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if items.isEmpty {
-                    emptyState
-                } else {
-                    cartList
-                }
-            }
-            .navigationTitle("Cart")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Close") { dismiss() }
-                }
+        Group {
+            if items.isEmpty {
+                emptyState
+            } else {
+                cartList
             }
         }
+        .navigationTitle("Cart")
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private var emptyState: some View {

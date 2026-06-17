@@ -45,9 +45,11 @@ struct ProductCardView: View {
 
     private var categoryIcon: String {
         switch product.category {
-        case .painting: "paintbrush"
-        case .art: "square.on.circle"
-        case .clothing: "tshirt"
+        case .painting:  "paintbrush"
+        case .sculpture: "cube"
+        case .ceramic:   "cup.and.saucer"
+        case .jewelry:   "sparkles"
+        case .clothing:  "tshirt"
         }
     }
 }

@@ -2,14 +2,18 @@ import Foundation
 
 enum Category: String, CaseIterable, Codable {
     case painting
-    case art
+    case sculpture
+    case ceramic
+    case jewelry
     case clothing
 
     var categoryDisplayName: String {
         switch self {
-        case .painting: "Paintings & Ceramics"
-        case .art: "Art"
-        case .clothing: "Clothes"
+        case .painting:  "Paintings"
+        case .sculpture: "Sculptures"
+        case .ceramic:   "Ceramics"
+        case .jewelry:   "Jewelry"
+        case .clothing:  "Clothes"
         }
     }
 }
@@ -20,8 +24,12 @@ enum Condition: String, CaseIterable, Codable {
     case fair
 }
 
-// AnyObject required — SwiftData @Model types are classes
+// AnyObject required — SwiftData @Model types are classes.
+// Identifiable is NOT listed here — @Model provides it non-isolated via PersistentModel.
+// Adding Identifiable here creates a main-actor-isolated duplicate that breaks PersistentModel.
+// Each model's `var id: String` satisfies PersistentModel's Identifiable requirement directly.
 protocol ProductDisplayable: AnyObject {
+    var id: String { get set }
     var name: String { get set }
     var price: Decimal { get set }
     var imageURLs: [String] { get set }
@@ -32,14 +40,5 @@ protocol ProductDisplayable: AnyObject {
 }
 
 extension ProductDisplayable {
-    /// Stable identity for ForEach — safe because all conformers are reference types (@Model classes)
-    var objectID: ObjectIdentifier { ObjectIdentifier(self) }
-
-    var categoryDisplayName: String {
-        switch category {
-        case .painting: "Paintings & Ceramics"
-        case .art: "Art"
-        case .clothing: "Clothes"
-        }
-    }
+    var categoryDisplayName: String { category.categoryDisplayName }
 }

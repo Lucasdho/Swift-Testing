@@ -2,7 +2,8 @@ import SwiftData
 import Foundation
 
 @Model
-final class Garment: ProductDisplayable {
+final class Cloth: ProductDisplayable {
+    var id: String
     var name: String
     var price: Decimal
     var imageURLs: [String]
@@ -16,6 +17,7 @@ final class Garment: ProductDisplayable {
     var category: Category { .clothing }
 
     init(
+        id: String = UUID().uuidString,
         name: String,
         price: Decimal,
         imageURLs: [String] = [],
@@ -25,6 +27,7 @@ final class Garment: ProductDisplayable {
         brand: String = "",
         createdAt: Date = .now
     ) {
+        self.id = id
         self.name = name
         self.price = price
         self.imageURLs = imageURLs
