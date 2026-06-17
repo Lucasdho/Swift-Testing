@@ -1,24 +1,42 @@
-//
-//  ContentView.swift
-//  Testing App
-//
-//  Created by Lucas Oliveira on 17/06/26.
-//
-
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    @State private var isCartPresented = false
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            CatalogView()
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        CartToolbarButton(isPresented: $isCartPresented)
+                    }
+                }
         }
-        .padding()
+        .sheet(isPresented: $isCartPresented) {
+            CartView()
+        }
     }
 }
 
-#Preview {
-    ContentView()
+private struct CartToolbarButton: View {
+    @Binding var isPresented: Bool
+    @Query private var cartItems: [CartItem]
+
+    var body: some View {
+        Button("Cart", systemImage: "cart") {
+            isPresented = true
+        }
+        .overlay(alignment: .topTrailing) {
+            if !cartItems.isEmpty {
+                Text("\(cartItems.count)")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(Color(.systemBackground))
+                    .padding(4)
+                    .background(Color.primary)
+                    .clipShape(Circle())
+                    .offset(x: 8, y: -8)
+            }
+        }
+    }
 }
