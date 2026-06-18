@@ -4,7 +4,8 @@ import Foundation
 @testable import Testing_App
 
 private let allModelTypes: [any PersistentModel.Type] = [
-    Painting.self, Sculpture.self, Ceramic.self, Jewelry.self, Cloth.self, CartItem.self, ImageModel.self
+    Painting.self, Sculpture.self, Ceramic.self, Jewelry.self, Cloth.self, CartItem.self, ImageModel.self,
+    ProductEngagement.self
 ]
 
 // MARK: — displayAttributes
@@ -183,5 +184,52 @@ struct ProductStatusTests {
     @Test func isOnSaleFalseWhenStatusIsNone() {
         let p = Painting(name: "X", price: 100, medium: "Oil", dimensions: "10x10", artist: "Y")
         #expect(p.isOnSale == false)
+    }
+}
+
+// MARK: — EngagementRepository
+
+@MainActor
+struct EngagementRepositoryTests {
+    let stack: PersistenceStack
+    let repo: EngagementRepository
+
+    init() throws {
+        stack = try PersistenceStack(modelTypes: allModelTypes, isMemoryOnly: true)
+        repo = try EngagementRepository(stack: stack)
+    }
+
+    @Test func recordViewIncrementsViewCount() throws {
+        try repo.recordView(productId: "abc")
+        let all = try repo.fetchAll()
+        #expect(all.first?.viewCount == 1)
+    }
+
+    @Test func recordCartAddIncrementsCartAddCount() throws {
+        try repo.recordCartAdd(productId: "abc")
+        let all = try repo.fetchAll()
+        #expect(all.first?.cartAddCount == 1)
+    }
+
+    @Test func popularityScoreIsSumOfViewsAndCartAdds() throws {
+        try repo.recordView(productId: "abc")
+        try repo.recordView(productId: "abc")
+        try repo.recordCartAdd(productId: "abc")
+        let all = try repo.fetchAll()
+        #expect(all.first?.popularityScore == 3)
+    }
+
+    @Test func multipleEventsForSameProductCreateOneRecord() throws {
+        try repo.recordView(productId: "xyz")
+        try repo.recordView(productId: "xyz")
+        let all = try repo.fetchAll()
+        #expect(all.count == 1)
+    }
+
+    @Test func differentProductIdsCreateSeparateRecords() throws {
+        try repo.recordView(productId: "p1")
+        try repo.recordView(productId: "p2")
+        let all = try repo.fetchAll()
+        #expect(all.count == 2)
     }
 }
