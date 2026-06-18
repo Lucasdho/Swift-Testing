@@ -155,3 +155,33 @@ struct CartRepositoryTests {
         #expect(item.product?.name == "X")
     }
 }
+
+// MARK: — ProductStatus
+
+struct ProductStatusTests {
+    @Test func effectivePriceReturnsSalePriceWhenOnSale() {
+        let p = Painting(
+            name: "X", price: 100, salePrice: 75, status: .onSale,
+            medium: "Oil", dimensions: "10x10", artist: "Y"
+        )
+        #expect(p.effectivePrice == 75)
+    }
+
+    @Test func effectivePriceReturnsPriceWhenNotOnSale() {
+        let p = Painting(name: "X", price: 100, medium: "Oil", dimensions: "10x10", artist: "Y")
+        #expect(p.effectivePrice == 100)
+    }
+
+    @Test func isOnSaleTrueWhenStatusOnSaleAndSalePriceSet() {
+        let p = Painting(
+            name: "X", price: 100, salePrice: 75, status: .onSale,
+            medium: "Oil", dimensions: "10x10", artist: "Y"
+        )
+        #expect(p.isOnSale == true)
+    }
+
+    @Test func isOnSaleFalseWhenStatusIsNone() {
+        let p = Painting(name: "X", price: 100, medium: "Oil", dimensions: "10x10", artist: "Y")
+        #expect(p.isOnSale == false)
+    }
+}

@@ -1,5 +1,11 @@
 import Foundation
 
+enum ProductStatus: String, CaseIterable, Codable {
+    case none
+    case new
+    case onSale
+}
+
 enum Category: String, CaseIterable, Codable {
     case painting
     case sculpture
@@ -32,6 +38,8 @@ protocol ProductDisplayable: AnyObject {
     var id: String { get set }
     var name: String { get set }
     var price: Decimal { get set }
+    var salePrice: Decimal? { get set }
+    var status: ProductStatus { get set }
     var imageURLs: [String] { get set }
     var productDescription: String { get set }
     var category: Category { get }
@@ -41,4 +49,6 @@ protocol ProductDisplayable: AnyObject {
 
 extension ProductDisplayable {
     var categoryDisplayName: String { category.categoryDisplayName }
+    var effectivePrice: Decimal { salePrice ?? price }
+    var isOnSale: Bool { status == .onSale && salePrice != nil }
 }

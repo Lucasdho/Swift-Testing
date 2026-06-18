@@ -6,6 +6,8 @@ final class Cloth: ProductDisplayable {
     var id: String
     var name: String
     var price: Decimal
+    var salePrice: Decimal?
+    var status: ProductStatus
     var imageURLs: [String]
     var productDescription: String
     var createdAt: Date
@@ -20,6 +22,8 @@ final class Cloth: ProductDisplayable {
         id: String = UUID().uuidString,
         name: String,
         price: Decimal,
+        salePrice: Decimal? = nil,
+        status: ProductStatus = .none,
         imageURLs: [String] = [],
         productDescription: String = "",
         clothingSize: String,
@@ -30,6 +34,8 @@ final class Cloth: ProductDisplayable {
         self.id = id
         self.name = name
         self.price = price
+        self.salePrice = salePrice
+        self.status = status
         self.imageURLs = imageURLs
         self.productDescription = productDescription
         self.clothingSize = clothingSize
