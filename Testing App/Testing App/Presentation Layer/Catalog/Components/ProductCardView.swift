@@ -51,26 +51,25 @@ struct ProductCardView: View {
 
     @ViewBuilder
     private var imageArea: some View {
-        Color.clear
-            .aspectRatio(displayRatio, contentMode: .fit)
-            .overlay {
-                if let data = imageData, let uiImage = UIImage(data: data) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
-                        .transition(.opacity)
-                } else if imageLoaded {
-                    ZStack {
-                        Color(.secondarySystemBackground)
-                        Image(systemName: categoryIcon)
-                            .font(.system(size: 32))
-                            .foregroundStyle(.tertiary)
-                    }
-                } else {
-                    ShimmerView()
-                }
+        if let data = imageData, let uiImage = UIImage(data: data) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity)
+                .transition(.opacity)
+        } else if imageLoaded {
+            ZStack {
+                Color(.secondarySystemBackground)
+                Image(systemName: categoryIcon)
+                    .font(.system(size: 32))
+                    .foregroundStyle(.tertiary)
             }
-            .clipped()
+            .aspectRatio(displayRatio, contentMode: .fit)
+        } else {
+            ShimmerView()
+                .aspectRatio(displayRatio, contentMode: .fit)
+                .frame(maxWidth: .infinity)
+        }
     }
 
     private var displayRatio: CGFloat {

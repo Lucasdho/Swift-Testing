@@ -17,3 +17,8 @@
 ## Claude Code notes
 - Unit tests use Swift Testing (`#expect`), not XCTest — don't migrate them to XCTest.
 - App source is in `Testing App/`; the git root (`Swift Testing/`) also has agentic-kit files.
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->
