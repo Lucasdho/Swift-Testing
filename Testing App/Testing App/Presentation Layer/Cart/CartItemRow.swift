@@ -12,21 +12,7 @@ struct CartItemRow: View {
                 Text(product.name)
                     .font(.system(size: 15, weight: .regular))
 
-                if product.isOnSale, let salePrice = product.salePrice {
-                    HStack(spacing: 4) {
-                        Text(product.price, format: .currency(code: Locale.current.currency?.identifier ?? "BRL"))
-                            .font(.system(size: 11, weight: .regular))
-                            .foregroundStyle(.secondary)
-                            .strikethrough()
-                        Text(salePrice, format: .currency(code: Locale.current.currency?.identifier ?? "BRL"))
-                            .font(.system(size: 13, weight: .regular))
-                            .foregroundStyle(.red)
-                    }
-                } else {
-                    Text(product.price, format: .currency(code: Locale.current.currency?.identifier ?? "BRL"))
-                        .font(.system(size: 13, weight: .regular))
-                        .foregroundStyle(.secondary)
-                }
+                PriceView(product: product)
             }
 
             Spacer()

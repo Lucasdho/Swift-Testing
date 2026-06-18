@@ -15,9 +15,7 @@ struct ProductHeaderSection: View {
                 .font(.system(size: 24, weight: .light))
                 .foregroundStyle(.primary)
 
-            Text(product.price, format: .currency(code: Locale.current.currency?.identifier ?? "BRL"))
-                .font(.system(size: 20, weight: .light))
-                .foregroundStyle(.secondary)
+            PriceView(product: product, size: 20, weight: .light)
 
             if !product.productDescription.isEmpty {
                 Text(product.productDescription)
