@@ -7,17 +7,47 @@ struct CatalogView: View {
     @Query private var ceramics: [Ceramic]
     @Query private var jewelry: [Jewelry]
     @Query private var cloths: [Cloth]
+    @Query private var engagements: [ProductEngagement]
 
     @State private var selectedCategory: Category?
-    @State private var selectedProduct: (any ProductDisplayable)?
+    @State private var sortOption: SortOption = .none
+    @State private var selectedStatuses: Set<ProductStatus> = []
+    @State private var activeSheet: ActiveSheet?
 
     private var allProducts: [any ProductDisplayable] {
         paintings + sculptures + ceramics + jewelry + cloths
     }
 
-    private var products: [any ProductDisplayable] {
-        guard let category = selectedCategory else { return allProducts }
-        return allProducts.filter { $0.category == category }
+    private var engagementMap: [String: Int] {
+        Dictionary(uniqueKeysWithValues: engagements.map { ($0.productId, $0.popularityScore) })
+    }
+
+    private var filteredAndSortedProducts: [any ProductDisplayable] {
+        var result: [any ProductDisplayable]
+        if let category = selectedCategory {
+            result = allProducts.filter { $0.category == category }
+        } else {
+            result = allProducts
+        }
+
+        if !selectedStatuses.isEmpty {
+            result = result.filter { selectedStatuses.contains($0.status) }
+        }
+
+        switch sortOption {
+        case .none:
+            break
+        case .popularity:
+            result = result.sorted { (engagementMap[$0.id] ?? 0) > (engagementMap[$1.id] ?? 0) }
+        case .recent:
+            result = result.sorted { $0.createdAt > $1.createdAt }
+        case .priceAscending:
+            result = result.sorted { $0.effectivePrice < $1.effectivePrice }
+        case .priceDescending:
+            result = result.sorted { $0.effectivePrice > $1.effectivePrice }
+        }
+
+        return result
     }
 
     var body: some View {
@@ -27,34 +57,18 @@ struct CatalogView: View {
             } else {
                 ScrollView {
                     VStack(spacing: 0) {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                FilterChip(title: "All", isSelected: selectedCategory == nil) {
-                                    selectedCategory = nil
-                                }
-                                ForEach(Category.allCases, id: \.rawValue) { category in
-                                    FilterChip(
-                                        title: category.categoryDisplayName,
-                                        isSelected: selectedCategory == category
-                                    ) {
-                                        selectedCategory = selectedCategory == category ? nil : category
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                        }
-                        .padding(.top, 12)
+                        chipRow.padding(.top, 12)
 
-                        if products.isEmpty {
+                        if filteredAndSortedProducts.isEmpty {
                             EmptyCategoryView()
                         } else {
                             LazyVGrid(
                                 columns: [GridItem(.adaptive(minimum: 160), spacing: 12)],
                                 spacing: 12
                             ) {
-                                ForEach(products, id: \.id) { product in
+                                ForEach(filteredAndSortedProducts, id: \.id) { product in
                                     Button {
-                                        selectedProduct = product
+                                        activeSheet = .product(product)
                                     } label: {
                                         ProductCardView(product: product)
                                     }
@@ -70,13 +84,66 @@ struct CatalogView: View {
         }
         .navigationTitle("Store")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: .init(
-            get: { selectedProduct != nil },
-            set: { if !$0 { selectedProduct = nil } }
+        .sheet(isPresented: Binding(
+            get: { activeSheet != nil },
+            set: { if !$0 { activeSheet = nil } }
         )) {
-            if let product = selectedProduct {
-                ProductDetailView(product: product)
+            switch activeSheet {
+            case .product(let p):
+                ProductDetailView(product: p)
+            case .sort:
+                SortSheet(selected: $sortOption)
+                    .presentationDetents([.height(280)])
+            case .filter:
+                FilterSheet(selectedStatuses: $selectedStatuses)
+                    .presentationDetents([.medium, .large])
+            case nil:
+                EmptyView()
             }
         }
     }
+
+    private var chipRow: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                FilterChip(
+                    title: sortOption == .none ? "Sort" : sortOption.rawValue,
+                    isSelected: sortOption != .none
+                ) {
+                    activeSheet = .sort
+                }
+
+                ZStack(alignment: .topTrailing) {
+                    FilterChip(title: "Filter", isSelected: !selectedStatuses.isEmpty) {
+                        activeSheet = .filter
+                    }
+                    if !selectedStatuses.isEmpty {
+                        Circle()
+                            .fill(Color.accentColor)
+                            .frame(width: 8, height: 8)
+                            .offset(x: 4, y: -4)
+                    }
+                }
+
+                FilterChip(title: "All", isSelected: selectedCategory == nil) {
+                    selectedCategory = nil
+                }
+                ForEach(Category.allCases, id: \.rawValue) { category in
+                    FilterChip(
+                        title: category.categoryDisplayName,
+                        isSelected: selectedCategory == category
+                    ) {
+                        selectedCategory = selectedCategory == category ? nil : category
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+    }
+}
+
+private enum ActiveSheet {
+    case product(any ProductDisplayable)
+    case sort
+    case filter
 }
