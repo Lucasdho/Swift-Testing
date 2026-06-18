@@ -12,8 +12,8 @@ enum SortOption: String, CaseIterable {
         case .none:            "arrow.up.arrow.down"
         case .popularity:      "flame"
         case .recent:          "clock"
-        case .priceAscending:  "dollarsign.arrow.up"
-        case .priceDescending: "dollarsign.arrow.down"
+        case .priceAscending:  "arrow.up.circle"
+        case .priceDescending: "arrow.down.circle"
         }
     }
 }
