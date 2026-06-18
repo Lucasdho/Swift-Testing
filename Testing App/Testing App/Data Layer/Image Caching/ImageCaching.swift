@@ -31,7 +31,7 @@ actor ImageCaching {
         
         Task { @MainActor in
             do {
-                self.imageRepository = try .init(stack: .init(modelTypes: [ImageModel.self], isMemoryOnly: false))
+                self.imageRepository = try .init(stack: .init(modelTypes: [ImageModel.self], isMemoryOnly: false, storeName: "image-cache"))
             } catch {
                 print(error)
             }

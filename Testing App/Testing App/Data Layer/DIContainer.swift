@@ -26,7 +26,7 @@ final class DIContainer {
 
     // All model types registered in one place; must match what PersistenceStack receives.
     static let allModelTypes: [any PersistentModel.Type] = [
-        Painting.self, Sculpture.self, Ceramic.self, Jewelry.self, Cloth.self, CartItem.self, ImageModel.self
+        Painting.self, Sculpture.self, Ceramic.self, Jewelry.self, Cloth.self, CartItem.self
     ]
 
     init() {
@@ -59,9 +59,11 @@ final class DIContainer {
     }
 
     private static func deleteStoreFiles() {
-        guard let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return }
-        for name in ["default.store", "default.store-wal", "default.store-shm"] {
-            try? FileManager.default.removeItem(at: base.appendingPathComponent(name))
+        guard let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first,
+              let items = try? FileManager.default.contentsOfDirectory(at: base, includingPropertiesForKeys: nil)
+        else { return }
+        for item in items where item.lastPathComponent.hasPrefix("default.store") || item.lastPathComponent.hasPrefix(".default.store") {
+            try? FileManager.default.removeItem(at: item)
         }
     }
 }

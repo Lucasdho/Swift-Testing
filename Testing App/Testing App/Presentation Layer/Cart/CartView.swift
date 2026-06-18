@@ -8,46 +8,30 @@ struct CartView: View {
     var body: some View {
         Group {
             if items.isEmpty {
-                emptyState
+                CartEmptyState()
             } else {
-                cartList
+                List {
+                    ForEach(items) { item in
+                        if let product = item.product {
+                            CartItemRow(item: item, product: product)
+                        }
+                    }
+                    .onDelete(perform: deleteItems)
+
+                    Section {
+                        HStack {
+                            Text("Total")
+                                .font(.system(size: 15, weight: .medium))
+                            Spacer()
+                            Text(totalPrice, format: .currency(code: Locale.current.currency?.identifier ?? "BRL"))
+                                .font(.system(size: 15, weight: .medium))
+                        }
+                    }
+                }
             }
         }
         .navigationTitle("Cart")
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "cart")
-                .font(.system(size: 48))
-                .foregroundStyle(.tertiary)
-            Text("Your cart is empty")
-                .font(.system(size: 15, weight: .regular))
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private var cartList: some View {
-        List {
-            ForEach(items) { item in
-                if let product = item.product {
-                    CartItemRow(item: item, product: product)
-                }
-            }
-            .onDelete(perform: deleteItems)
-
-            Section {
-                HStack {
-                    Text("Total")
-                        .font(.system(size: 15, weight: .medium))
-                    Spacer()
-                    Text(totalPrice, format: .currency(code: Locale.current.currency?.identifier ?? "BRL"))
-                        .font(.system(size: 15, weight: .medium))
-                }
-            }
-        }
     }
 
     private var totalPrice: Decimal {
@@ -61,48 +45,5 @@ struct CartView: View {
         for index in offsets {
             try? di.cart.delete(items[index])
         }
-    }
-}
-
-private struct CartItemRow: View {
-    let item: CartItem
-    let product: any ProductDisplayable
-    @Environment(DIContainer.self) private var di
-
-    var body: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(product.name)
-                    .font(.system(size: 15, weight: .regular))
-                Text(product.price, format: .currency(code: Locale.current.currency?.identifier ?? "BRL"))
-                    .font(.system(size: 13, weight: .regular))
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            HStack(spacing: 12) {
-                Button("Remove one", systemImage: "minus") {
-                    if item.quantity > 1 {
-                        item.quantity -= 1
-                        try? di.cart.save()
-                    }
-                }
-                .labelStyle(.iconOnly)
-                .buttonStyle(.bordered)
-
-                Text("\(item.quantity)")
-                    .font(.system(size: 15, weight: .medium))
-                    .frame(minWidth: 24)
-
-                Button("Add one", systemImage: "plus") {
-                    item.quantity += 1
-                    try? di.cart.save()
-                }
-                .labelStyle(.iconOnly)
-                .buttonStyle(.bordered)
-            }
-        }
-        .padding(.vertical, 4)
     }
 }

@@ -23,15 +23,30 @@ struct CatalogView: View {
     var body: some View {
         Group {
             if allProducts.isEmpty {
-                emptyStore
+                EmptyStoreView()
             } else {
                 ScrollView {
                     VStack(spacing: 0) {
-                        categoryChips
-                            .padding(.top, 12)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                FilterChip(title: "All", isSelected: selectedCategory == nil) {
+                                    selectedCategory = nil
+                                }
+                                ForEach(Category.allCases, id: \.rawValue) { category in
+                                    FilterChip(
+                                        title: category.categoryDisplayName,
+                                        isSelected: selectedCategory == category
+                                    ) {
+                                        selectedCategory = selectedCategory == category ? nil : category
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                        }
+                        .padding(.top, 12)
 
                         if products.isEmpty {
-                            emptyCategory
+                            EmptyCategoryView()
                         } else {
                             LazyVGrid(
                                 columns: [GridItem(.adaptive(minimum: 160), spacing: 12)],
@@ -63,64 +78,5 @@ struct CatalogView: View {
                 ProductDetailView(product: product)
             }
         }
-    }
-
-    private var emptyStore: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "storefront")
-                .font(.system(size: 48))
-                .foregroundStyle(.tertiary)
-            Text("No products yet")
-                .font(.system(size: 17, weight: .regular))
-                .foregroundStyle(.primary)
-            Text("Check back soon for new arrivals.")
-                .font(.system(size: 15, weight: .regular))
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding(.horizontal, 32)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private var emptyCategory: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "tray")
-                .font(.system(size: 40))
-                .foregroundStyle(.tertiary)
-            Text("Nothing in this category")
-                .font(.system(size: 15, weight: .regular))
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.top, 64)
-    }
-
-    private var categoryChips: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                chip(title: "All", isSelected: selectedCategory == nil) {
-                    selectedCategory = nil
-                }
-                ForEach(Category.allCases, id: \.rawValue) { category in
-                    chip(title: category.categoryDisplayName, isSelected: selectedCategory == category) {
-                        selectedCategory = selectedCategory == category ? nil : category
-                    }
-                }
-            }
-            .padding(.horizontal, 16)
-        }
-    }
-
-    private func chip(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(isSelected ? Color(.systemBackground) : .primary)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(isSelected ? Color.primary : Color(.secondarySystemBackground))
-                .clipShape(.rect(cornerRadius: 8))
-        }
-        .buttonStyle(.plain)
     }
 }
