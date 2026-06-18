@@ -21,17 +21,15 @@ struct SortSheet: View {
                         VStack(spacing: 8) {
                             ZStack {
                                 Circle()
-                                    .fill(selected == option ? Color.primary : Color(.secondarySystemBackground))
+                                    .fill(selected == option ? Color.accentColor : Color(.secondarySystemBackground))
                                     .frame(width: 64, height: 64)
                                 Image(systemName: option.icon)
                                     .font(.system(size: 22))
-                                    .foregroundStyle(
-                                        selected == option ? Color(.systemBackground) : Color.primary
-                                    )
+                                    .foregroundStyle(selected == option ? Color.white : Color.primary)
                             }
                             Text(option.rawValue)
-                                .font(.system(size: 12))
-                                .foregroundStyle(selected == option ? .primary : .secondary)
+                                .font(.system(size: 12, weight: selected == option ? .semibold : .regular))
+                                .foregroundStyle(selected == option ? Color.accentColor : .secondary)
                                 .multilineTextAlignment(.center)
                         }
                     }
