@@ -33,20 +33,20 @@ final class DIContainer {
     ]
 
     init() {
-        var didReset = false
+        // ponytail: schema version guard — bump this string whenever @Model types change.
+        // Deletes the store BEFORE SwiftData opens it, avoiding fatal nil-cast crashes that
+        // try? cannot catch. Replace with VersionedSchema migration plan if data preservation matters.
+        let schemaVersion = "v2"
+        var didReset = UserDefaults.standard.string(forKey: "sd.schemaVersion") != schemaVersion
+        if didReset {
+            DIContainer.deleteStoreFiles()
+            UserDefaults.standard.set(schemaVersion, forKey: "sd.schemaVersion")
+        }
+
         let s: PersistenceStack
         do {
-            let candidate = try PersistenceStack(modelTypes: DIContainer.allModelTypes, isMemoryOnly: false)
-            // ponytail: probe fetch — ModelContainer.init can succeed even when the store has stale
-            // persistent history that makes all queries fail. Catch it here so the reset path fires.
-            guard let ctx = candidate.context,
-                  (try? ctx.fetchCount(FetchDescriptor<Painting>())) != nil else {
-                throw DataLayerError.addFailed(NSError(domain: "PersistenceStack", code: 1))
-            }
-            s = candidate
+            s = try PersistenceStack(modelTypes: DIContainer.allModelTypes, isMemoryOnly: false)
         } catch {
-            // ponytail: destructive reset — corrupted store from partial-schema open (dev iteration only);
-            // if data preservation is needed later, replace with a migration plan instead.
             DIContainer.deleteStoreFiles()
             s = try! PersistenceStack(modelTypes: DIContainer.allModelTypes, isMemoryOnly: false)
             didReset = true
