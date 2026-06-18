@@ -100,7 +100,8 @@ struct CatalogView: View {
             HStack(spacing: 8) {
                 FilterChip(
                     title: sortOption == .none ? "Sort" : sortOption.rawValue,
-                    isSelected: sortOption != .none
+                    isSelected: sortOption != .none,
+                    trailingIcon: "chevron.down"
                 ) {
                     activeSheet = .sort
                 }
