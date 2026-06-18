@@ -57,19 +57,9 @@ struct CatalogView: View {
                         if filteredAndSortedProducts.isEmpty {
                             EmptyCategoryView()
                         } else {
-                            LazyVGrid(
-                                columns: [GridItem(.adaptive(minimum: 160), spacing: 12)],
-                                spacing: 12
-                            ) {
-                                ForEach(filteredAndSortedProducts, id: \.id) { product in
-                                    Button {
-                                        activeSheet = .product(product)
-                                    } label: {
-                                        ProductCardView(product: product)
-                                    }
-                                    .buttonStyle(.plain)
-                                    .contentShape(Rectangle())
-                                }
+                            HStack(alignment: .top, spacing: 12) {
+                                masonryColumn(leftColumn)
+                                masonryColumn(rightColumn)
                             }
                             .padding(.horizontal, 16)
                             .padding(.top, 16)
@@ -94,6 +84,29 @@ struct CatalogView: View {
                 EmptyView()
             }
         }
+    }
+
+    private var leftColumn: [any ProductDisplayable] {
+        filteredAndSortedProducts.enumerated().filter { $0.offset.isMultiple(of: 2) }.map(\.element)
+    }
+
+    private var rightColumn: [any ProductDisplayable] {
+        filteredAndSortedProducts.enumerated().filter { !$0.offset.isMultiple(of: 2) }.map(\.element)
+    }
+
+    private func masonryColumn(_ products: [any ProductDisplayable]) -> some View {
+        VStack(spacing: 12) {
+            ForEach(products, id: \.id) { product in
+                Button {
+                    activeSheet = .product(product)
+                } label: {
+                    ProductCardView(product: product)
+                }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private var chipRow: some View {

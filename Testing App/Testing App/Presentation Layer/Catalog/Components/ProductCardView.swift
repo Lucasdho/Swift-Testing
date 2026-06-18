@@ -4,24 +4,12 @@ struct ProductCardView: View {
     let product: any ProductDisplayable
 
     @State private var imageData: Data?
+    @State private var imageLoaded = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topLeading) {
-                ZStack {
-                    Color(.secondarySystemBackground)
-                    if let data = imageData, let uiImage = UIImage(data: data) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFill()
-                    } else {
-                        Image(systemName: categoryIcon)
-                            .font(.system(size: 32))
-                            .foregroundStyle(.tertiary)
-                    }
-                }
-                .aspectRatio(4/3, contentMode: .fit)
-                .clipped()
+                imageArea
 
                 if product.status != .none {
                     Text(product.status == .new ? "New" : "Sale")
@@ -49,10 +37,41 @@ struct ProductCardView: View {
         .background(Color(.secondarySystemBackground))
         .clipShape(.rect(cornerRadius: 12))
         .task {
+            defer { imageLoaded = true }
             guard let urlString = product.imageURLs.first,
                   let url = URL(string: urlString) else { return }
             imageData = await ImageCaching.shared.getImage(url: url)
         }
+    }
+
+    @ViewBuilder
+    private var imageArea: some View {
+        if let data = imageData, let uiImage = UIImage(data: data) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity)
+                .transition(.opacity)
+        } else if imageLoaded {
+            // load failed — show category icon at placeholder ratio
+            ZStack {
+                Color(.secondarySystemBackground)
+                Image(systemName: categoryIcon)
+                    .font(.system(size: 32))
+                    .foregroundStyle(.tertiary)
+            }
+            .aspectRatio(placeholderRatio, contentMode: .fit)
+        } else {
+            ShimmerView()
+                .aspectRatio(placeholderRatio, contentMode: .fit)
+                .frame(maxWidth: .infinity)
+        }
+    }
+
+    // Deterministic pseudo-random ratio per product for visual variety (0.75 – 1.35)
+    private var placeholderRatio: CGFloat {
+        let hash = abs(product.id.hashValue % 100)
+        return 0.75 + CGFloat(hash) / 100.0 * 0.6
     }
 
     private var categoryIcon: String {
