@@ -4,13 +4,26 @@ struct ProductDetailView: View {
     let product: any ProductDisplayable
 
     @Environment(DIContainer.self) private var di
-    @State private var imageData: Data?
+    @State private var imageDatas: [Data] = []
     @State private var addedToCart = false
+    @State private var showImageViewer = false
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                ProductHeroImage(imageData: imageData)
+                ProductHeroImage(imageData: imageDatas.first)
+                    .onTapGesture { if !imageDatas.isEmpty { showImageViewer = true } }
+                    .overlay(alignment: .bottomTrailing) {
+                        if !imageDatas.isEmpty {
+                            Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(.white)
+                                .padding(6)
+                                .background(Color.black.opacity(0.45))
+                                .clipShape(.rect(cornerRadius: 6))
+                                .padding(10)
+                        }
+                    }
 
                 VStack(alignment: .leading, spacing: 24) {
                     ProductHeaderSection(product: product)
@@ -23,10 +36,18 @@ struct ProductDetailView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showImageViewer) {
+            ImageViewerSheet(images: imageDatas)
+        }
         .task {
-            guard let urlString = product.imageURLs.first,
-                  let url = URL(string: urlString) else { return }
-            imageData = await ImageCaching.shared.getImage(url: url)
+            var datas: [Data] = []
+            for urlString in product.imageURLs {
+                guard let url = URL(string: urlString) else { continue }
+                if let data = await ImageCaching.shared.getImage(url: url) {
+                    datas.append(data)
+                }
+            }
+            imageDatas = datas
             try? di.engagement.recordView(productId: product.id)
         }
     }

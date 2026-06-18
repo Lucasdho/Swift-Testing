@@ -20,7 +20,7 @@ struct ProductCardView: View {
                             .foregroundStyle(.tertiary)
                     }
                 }
-                .frame(height: 160)
+                .aspectRatio(4/3, contentMode: .fit)
                 .clipped()
 
                 if product.status != .none {
