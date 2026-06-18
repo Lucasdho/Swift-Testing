@@ -41,6 +41,7 @@ protocol ProductDisplayable: AnyObject {
     var salePrice: Decimal? { get set }
     var status: ProductStatus { get set }
     var imageURLs: [String] { get set }
+    var imageAspectRatio: Double? { get set }
     var productDescription: String { get set }
     var category: Category { get }
     var createdAt: Date { get set }

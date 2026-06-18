@@ -9,6 +9,7 @@ final class Sculpture: ProductDisplayable {
     var salePrice: Decimal?
     var status: ProductStatus
     var imageURLs: [String]
+    var imageAspectRatio: Double?
     var productDescription: String
     var createdAt: Date
 
@@ -25,6 +26,7 @@ final class Sculpture: ProductDisplayable {
         salePrice: Decimal? = nil,
         status: ProductStatus = .none,
         imageURLs: [String] = [],
+        imageAspectRatio: Double? = nil,
         productDescription: String = "",
         material: String,
         dimensions: String,
@@ -37,6 +39,7 @@ final class Sculpture: ProductDisplayable {
         self.salePrice = salePrice
         self.status = status
         self.imageURLs = imageURLs
+        self.imageAspectRatio = imageAspectRatio
         self.productDescription = productDescription
         self.material = material
         self.dimensions = dimensions

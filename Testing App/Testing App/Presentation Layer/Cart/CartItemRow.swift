@@ -12,7 +12,7 @@ struct CartItemRow: View {
                 Text(product.name)
                     .font(.system(size: 15, weight: .regular))
 
-                PriceView(product: product)
+                PriceView(price: product.price, salePrice: product.salePrice)
             }
 
             Spacer()

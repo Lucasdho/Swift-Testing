@@ -15,7 +15,7 @@ struct ProductHeaderSection: View {
                 .font(.system(size: 24, weight: .light))
                 .foregroundStyle(.primary)
 
-            PriceView(product: product, size: 20, weight: .light)
+            PriceView(price: product.price, salePrice: product.salePrice, size: 20, regularWeight: .light)
 
             if !product.productDescription.isEmpty {
                 Text(product.productDescription)

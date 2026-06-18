@@ -11,15 +11,20 @@ struct ProductCardView: View {
             ZStack(alignment: .topLeading) {
                 imageArea
 
-                if product.status != .none {
-                    Text(product.status == .new ? "New" : "Sale")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(product.status == .new ? Color.blue : Color.red)
-                        .clipShape(.rect(cornerRadius: 12))
-                        .padding(8)
+                // Horizontal row of status badges — one per tag.
+                if !tags.isEmpty {
+                    HStack(spacing: 4) {
+                        ForEach(tags, id: \.label) { tag in
+                            Text(tag.label)
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(tag.color)
+                                .clipShape(.rect(cornerRadius: 12))
+                        }
+                    }
+                    .padding(8)
                 }
             }
 
@@ -29,7 +34,7 @@ struct ProductCardView: View {
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
-                PriceView(product: product, size: 13, weight: .medium)
+                PriceView(price: product.price, salePrice: product.salePrice, size: 13, regularWeight: .medium)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 12)
@@ -46,30 +51,32 @@ struct ProductCardView: View {
 
     @ViewBuilder
     private var imageArea: some View {
-        if let data = imageData, let uiImage = UIImage(data: data) {
-            Image(uiImage: uiImage)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity)
-                .transition(.opacity)
-        } else if imageLoaded {
-            // load failed — show category icon at placeholder ratio
-            ZStack {
-                Color(.secondarySystemBackground)
-                Image(systemName: categoryIcon)
-                    .font(.system(size: 32))
-                    .foregroundStyle(.tertiary)
+        Color.clear
+            .aspectRatio(displayRatio, contentMode: .fit)
+            .overlay {
+                if let data = imageData, let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .transition(.opacity)
+                } else if imageLoaded {
+                    ZStack {
+                        Color(.secondarySystemBackground)
+                        Image(systemName: categoryIcon)
+                            .font(.system(size: 32))
+                            .foregroundStyle(.tertiary)
+                    }
+                } else {
+                    ShimmerView()
+                }
             }
-            .aspectRatio(placeholderRatio, contentMode: .fit)
-        } else {
-            ShimmerView()
-                .aspectRatio(placeholderRatio, contentMode: .fit)
-                .frame(maxWidth: .infinity)
-        }
+            .clipped()
     }
 
-    // Deterministic pseudo-random ratio per product for visual variety (0.75 – 1.35)
-    private var placeholderRatio: CGFloat {
+    private var displayRatio: CGFloat {
+        if let ratio = product.imageAspectRatio {
+            return CGFloat(ratio)
+        }
         let hash = abs(product.id.hashValue % 100)
         return 0.75 + CGFloat(hash) / 100.0 * 0.6
     }
@@ -82,5 +89,21 @@ struct ProductCardView: View {
         case .jewelry:   "sparkles"
         case .clothing:  "tshirt"
         }
+    }
+
+    // Maps the current single `status` to a badge list.
+    // When the domain model evolves to support multiple statuses,
+    // update only this property — the HStack layout above needs no changes.
+    private var tags: [Tag] {
+        switch product.status {
+        case .none:   []
+        case .new:    [Tag(label: "NEW",  color: .blue)]
+        case .onSale: [Tag(label: "SALE", color: .red)]
+        }
+    }
+
+    private struct Tag {
+        let label: String
+        let color: Color
     }
 }

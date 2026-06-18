@@ -9,6 +9,7 @@ final class Cloth: ProductDisplayable {
     var salePrice: Decimal?
     var status: ProductStatus
     var imageURLs: [String]
+    var imageAspectRatio: Double?
     var productDescription: String
     var createdAt: Date
 
@@ -25,6 +26,7 @@ final class Cloth: ProductDisplayable {
         salePrice: Decimal? = nil,
         status: ProductStatus = .none,
         imageURLs: [String] = [],
+        imageAspectRatio: Double? = nil,
         productDescription: String = "",
         clothingSize: String,
         condition: Condition,
@@ -37,6 +39,7 @@ final class Cloth: ProductDisplayable {
         self.salePrice = salePrice
         self.status = status
         self.imageURLs = imageURLs
+        self.imageAspectRatio = imageAspectRatio
         self.productDescription = productDescription
         self.clothingSize = clothingSize
         self.condition = condition

@@ -9,6 +9,7 @@ final class Ceramic: ProductDisplayable {
     var salePrice: Decimal?
     var status: ProductStatus
     var imageURLs: [String]
+    var imageAspectRatio: Double?
     var productDescription: String
     var createdAt: Date
 
@@ -25,6 +26,7 @@ final class Ceramic: ProductDisplayable {
         salePrice: Decimal? = nil,
         status: ProductStatus = .none,
         imageURLs: [String] = [],
+        imageAspectRatio: Double? = nil,
         productDescription: String = "",
         technique: String,
         glaze: String,
@@ -37,6 +39,7 @@ final class Ceramic: ProductDisplayable {
         self.salePrice = salePrice
         self.status = status
         self.imageURLs = imageURLs
+        self.imageAspectRatio = imageAspectRatio
         self.productDescription = productDescription
         self.technique = technique
         self.glaze = glaze

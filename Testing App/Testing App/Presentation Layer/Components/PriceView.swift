@@ -1,25 +1,29 @@
 import SwiftUI
 
 struct PriceView: View {
-    let product: any ProductDisplayable
+    let price: Decimal
+    var salePrice: Decimal? = nil
+
     var size: CGFloat = 13
-    var weight: Font.Weight = .regular
     var originalSize: CGFloat? = nil
+    var regularWeight: Font.Weight = .regular
+    var saleWeight: Font.Weight = .bold
 
     var body: some View {
-        if product.isOnSale, let salePrice = product.salePrice {
+        if let salePrice {
             HStack(spacing: 4) {
-                Text(product.price, format: .currency(code: currencyCode))
-                    .font(.system(size: originalSize ?? size - 2, weight: weight))
+                Text(price, format: .currency(code: currencyCode))
+                    .font(.system(size: originalSize ?? size - 1, weight: regularWeight))
                     .foregroundStyle(.secondary)
                     .strikethrough()
+
                 Text(salePrice, format: .currency(code: currencyCode))
-                    .font(.system(size: size, weight: weight))
+                    .font(.system(size: size + 1, weight: saleWeight))
                     .foregroundStyle(.red)
             }
         } else {
-            Text(product.price, format: .currency(code: currencyCode))
-                .font(.system(size: size, weight: weight))
+            Text(price, format: .currency(code: currencyCode))
+                .font(.system(size: size, weight: regularWeight))
                 .foregroundStyle(.secondary)
         }
     }

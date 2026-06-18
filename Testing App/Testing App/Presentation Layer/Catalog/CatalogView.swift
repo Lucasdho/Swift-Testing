@@ -65,6 +65,10 @@ struct CatalogView: View {
                             .padding(.top, 16)
                         }
                     }
+                    // Animate layout changes whenever the visible product IDs change
+                    // (filter toggle, sort change). Using .map(\.id) avoids requiring
+                    // Equatable conformance on `any ProductDisplayable`.
+                    .animation(.snappy, value: filteredAndSortedProducts.map(\.id))
                 }
             }
         }
@@ -104,6 +108,9 @@ struct CatalogView: View {
                 }
                 .buttonStyle(.plain)
                 .contentShape(Rectangle())
+                // Scale + fade transition applied per item so that cards animate
+                // individually when they enter or leave the column.
+                .transition(.scale(scale: 0.9).combined(with: .opacity))
             }
         }
         .frame(maxWidth: .infinity)
