@@ -37,7 +37,7 @@ struct CartView: View {
     private var totalPrice: Decimal {
         items.reduce(Decimal.zero) { sum, item in
             guard let product = item.product else { return sum }
-            return sum + product.price * Decimal(item.quantity)
+            return sum + product.effectivePrice * Decimal(item.quantity)
         }
     }
 
