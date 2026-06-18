@@ -68,6 +68,7 @@ struct CatalogView: View {
                                         ProductCardView(product: product)
                                     }
                                     .buttonStyle(.plain)
+                                    .contentShape(Rectangle())
                                 }
                             }
                             .padding(.horizontal, 16)
