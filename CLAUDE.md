@@ -12,6 +12,7 @@
 | Spec file | Domain | Status |
 |---|---|---|
 | specs/store-spec.md | Store app (product model, navigation, cart, catalog, images) | v1.0 — settled |
+| specs/product-status-sort-filter-spec.md | Product status (new/onSale), salePrice, engagement popularity, sort/filter UI | v1.0 — settled |
 
 ## Claude Code notes
 - Unit tests use Swift Testing (`#expect`), not XCTest — don't migrate them to XCTest.
