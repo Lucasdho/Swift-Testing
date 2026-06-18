@@ -27,11 +27,13 @@ struct ProductDetailView: View {
             guard let urlString = product.imageURLs.first,
                   let url = URL(string: urlString) else { return }
             imageData = await ImageCaching.shared.getImage(url: url)
+            try? di.engagement.recordView(productId: product.id)
         }
     }
 
     private func addToCart() {
         try? di.cart.addOrIncrement(product)
+        try? di.engagement.recordCartAdd(productId: product.id)
         addedToCart = true
     }
 }
