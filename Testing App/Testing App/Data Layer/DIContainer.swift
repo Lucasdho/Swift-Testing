@@ -17,6 +17,7 @@ final class DIContainer {
     let ceramics: CeramicRepository
     let jewelry: JewelryRepository
     let cloths: ClothRepository
+    let engagement: EngagementRepository
 
     /// True when the store was corrupted and destroyed on this launch — use to re-trigger seeding.
     let resetOccurred: Bool
@@ -26,7 +27,9 @@ final class DIContainer {
 
     // All model types registered in one place; must match what PersistenceStack receives.
     static let allModelTypes: [any PersistentModel.Type] = [
-        Painting.self, Sculpture.self, Ceramic.self, Jewelry.self, Cloth.self, CartItem.self
+        Painting.self, Sculpture.self, Ceramic.self, Jewelry.self, Cloth.self,
+        CartItem.self,
+        ProductEngagement.self
     ]
 
     init() {
@@ -55,6 +58,7 @@ final class DIContainer {
         ceramics = try! CeramicRepository(stack: s)
         jewelry = try! JewelryRepository(stack: s)
         cloths = try! ClothRepository(stack: s)
+        engagement = try! EngagementRepository(stack: s)
         resetOccurred = didReset
     }
 
