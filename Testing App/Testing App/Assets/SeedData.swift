@@ -24,6 +24,33 @@ enum SeedData {
             dimensions: "50 × 70 cm",
             artist: "João Alves"
         ))
+        context.insert(Painting(
+            id: "painting-003",
+            name: "Open Sea",
+            price: 520,
+            imageURLs: ["https://images.unsplash.com/photo-1695844918823-8ec54d7d839c?q=80&w=2252&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],
+            productDescription: "Oil on canvas seascape, rolling waves under open sky.",
+            medium: "Oil",
+            dimensions: "70 × 50 cm",
+            artist: "Carlos Melo"
+        ))
+        context.insert(Painting(
+            id: "painting-004",
+            name: "Watercolor Set",
+            price: 200,
+            salePrice: 180,
+            status: .new,
+            imageURLs: [
+                "https://images.unsplash.com/photo-1510832842230-87253f48d74f?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                "https://images.unsplash.com/photo-1510832758362-af875829efcf?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                "https://images.unsplash.com/photo-1510832900031-d36b87d3847c?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                "https://images.unsplash.com/photo-1510832955159-2e2fdffbf291?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            ],
+            productDescription: "Cotton 300g paper + pentel coolors + derwent brushes(3-12) + white godet",
+            medium: "Watercolor",
+            dimensions: "60 × 60 cm",
+            artist: "Studio Santos"
+        ))
         context.insert(Sculpture(
             id: "sculpture-001",
             name: "Twisted Form",

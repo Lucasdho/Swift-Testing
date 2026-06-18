@@ -15,7 +15,7 @@ struct AddToCartButton: View {
             .padding(.vertical, 16)
             .background(isAdded ? Color(.systemGreen).opacity(0.15) : Color.primary)
             .foregroundStyle(isAdded ? Color(.systemGreen) : Color(.systemBackground))
-            .clipShape(.rect(cornerRadius: 10))
+            .clipShape(.rect(cornerRadius: 16))
         }
         .animation(.easeInOut(duration: 0.2), value: isAdded)
     }

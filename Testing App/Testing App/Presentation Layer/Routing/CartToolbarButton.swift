@@ -20,6 +20,7 @@ struct CartToolbarButton: View {
                             .offset(x: 8, y: -8)
                     }
                 }
+                .padding(4)
         }
     }
 }

@@ -25,7 +25,7 @@ struct ProductAttributesSection: View {
                 }
             }
             .background(Color(.secondarySystemBackground))
-            .clipShape(.rect(cornerRadius: 10))
+            .clipShape(.rect(cornerRadius: 12))
         }
     }
 }

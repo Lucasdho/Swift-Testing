@@ -30,7 +30,7 @@ struct ProductCardView: View {
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(product.status == .new ? Color.blue : Color.red)
-                        .clipShape(.rect(cornerRadius: 6))
+                        .clipShape(.rect(cornerRadius: 12))
                         .padding(8)
                 }
             }
@@ -47,7 +47,7 @@ struct ProductCardView: View {
             .padding(.vertical, 12)
         }
         .background(Color(.secondarySystemBackground))
-        .clipShape(.rect(cornerRadius: 10))
+        .clipShape(.rect(cornerRadius: 12))
         .task {
             guard let urlString = product.imageURLs.first,
                   let url = URL(string: urlString) else { return }
