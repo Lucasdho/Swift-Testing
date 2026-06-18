@@ -1,9 +1,11 @@
 import SwiftData
 import Foundation
 
+/// Repository for ``CartItem`` models, with cart-specific business logic on top of ``StoreRepository``.
 @MainActor
 final class CartRepository: StoreRepository<CartItem> {
 
+    /// Adds `product` to the cart, or increments its quantity if it is already present.
     func addOrIncrement(_ product: any ProductDisplayable) throws {
         let all = try fetchAll()
         // ponytail: in-memory scan — cart is small
@@ -34,6 +36,7 @@ final class CartRepository: StoreRepository<CartItem> {
         }
     }
 
+    /// Returns the sum of `price × quantity` for all items in the cart.
     func totalPrice() throws -> Decimal {
         try fetchAll().reduce(Decimal.zero) { sum, item in
             guard let product = item.product else { return sum }
@@ -41,6 +44,7 @@ final class CartRepository: StoreRepository<CartItem> {
         }
     }
 
+    /// Persists any pending in-memory changes (e.g. after a quantity increment).
     func save() throws {
         try persistenceStack.context?.save()
     }

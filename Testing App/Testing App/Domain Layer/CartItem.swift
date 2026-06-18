@@ -1,6 +1,11 @@
 import SwiftData
 import Foundation
 
+/// A single line item in the shopping cart, linking a quantity to one ``ProductDisplayable``.
+///
+/// Each product type is stored as a separate optional relationship because SwiftData
+/// cannot store protocol-typed (`any ProductDisplayable`) relationships. Exactly one
+/// of the five optionals is non-nil per instance; `product` exposes whichever is set.
 @Model
 final class CartItem {
     var id: String

@@ -7,6 +7,7 @@
 
 import SwiftData
 
+/// Default implementations of all ``SwifDataRepository`` CRUD operations backed by the shared ``PersistenceStack``.
 extension SwifDataRepository {
     public func add(_ model: Model) throws {
             guard let context = persistenceStack.context else {

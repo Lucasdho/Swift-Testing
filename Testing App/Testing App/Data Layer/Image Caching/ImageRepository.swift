@@ -8,9 +8,11 @@
 import Foundation
 import SwiftData
 
+/// SwiftData-backed repository for ``ImageModel``, used as the L2 disk cache by ``ImageCaching``.
 @MainActor
 final class ImageRepository: StoreRepository<ImageModel> {
 
+    /// Fetches the cached image whose `id` matches the given URL string, or `nil` if not found.
     func fetchImage(byID id: String) -> ImageModel? {
         guard let context = persistenceStack.context else { return nil }
 
@@ -30,6 +32,7 @@ final class ImageRepository: StoreRepository<ImageModel> {
         }
     }
 
+    /// Persists `image` to the SwiftData store.
     func saveImage(_ image: ImageModel) throws {
         try self.add(image)
     }

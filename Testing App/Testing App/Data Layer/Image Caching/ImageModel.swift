@@ -8,6 +8,10 @@
 import Foundation
 import SwiftData
 
+/// SwiftData model for a cached image, keyed by absolute URL string.
+///
+/// `imageData` uses `.externalStorage` so large blobs are stored on disk
+/// rather than inline in the SQLite store.
 @Model
 public final class ImageModel {
     @Attribute(.unique) public var id: String
