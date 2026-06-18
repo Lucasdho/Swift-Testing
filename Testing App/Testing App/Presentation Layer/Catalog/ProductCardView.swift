@@ -7,29 +7,55 @@ struct ProductCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ZStack {
-                Color(.secondarySystemBackground)
-                if let data = imageData, let uiImage = UIImage(data: data) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
-                } else {
-                    Image(systemName: categoryIcon)
-                        .font(.system(size: 32))
-                        .foregroundStyle(.tertiary)
+            ZStack(alignment: .topLeading) {
+                ZStack {
+                    Color(.secondarySystemBackground)
+                    if let data = imageData, let uiImage = UIImage(data: data) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        Image(systemName: categoryIcon)
+                            .font(.system(size: 32))
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+                .frame(height: 160)
+                .clipped()
+
+                if product.status != .none {
+                    Text(product.status == .new ? "New" : "Sale")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(product.status == .new ? Color.blue : Color.red)
+                        .clipShape(.rect(cornerRadius: 6))
+                        .padding(8)
                 }
             }
-            .frame(height: 160)
-            .clipped()
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(product.name)
                     .font(.system(size: 15, weight: .regular))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
-                Text(product.price, format: .currency(code: Locale.current.currency?.identifier ?? "BRL"))
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.secondary)
+
+                if product.isOnSale, let salePrice = product.salePrice {
+                    HStack(spacing: 4) {
+                        Text(product.price, format: .currency(code: Locale.current.currency?.identifier ?? "BRL"))
+                            .font(.system(size: 11, weight: .regular))
+                            .foregroundStyle(.secondary)
+                            .strikethrough()
+                        Text(salePrice, format: .currency(code: Locale.current.currency?.identifier ?? "BRL"))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(.red)
+                    }
+                } else {
+                    Text(product.price, format: .currency(code: Locale.current.currency?.identifier ?? "BRL"))
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(.secondary)
+                }
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 12)
