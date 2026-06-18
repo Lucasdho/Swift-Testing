@@ -9,9 +9,8 @@ struct CatalogView: View {
     @Query private var cloths: [Cloth]
     @Query private var engagements: [ProductEngagement]
 
-    @State private var selectedCategory: Category?
+    @State private var selectedCategories: Set<Category> = []
     @State private var sortOption: SortOption = .none
-    @State private var selectedStatuses: Set<ProductStatus> = []
     @State private var activeSheet: ActiveSheet?
 
     private var allProducts: [any ProductDisplayable] {
@@ -24,14 +23,10 @@ struct CatalogView: View {
 
     private var filteredAndSortedProducts: [any ProductDisplayable] {
         var result: [any ProductDisplayable]
-        if let category = selectedCategory {
-            result = allProducts.filter { $0.category == category }
-        } else {
+        if selectedCategories.isEmpty {
             result = allProducts
-        }
-
-        if !selectedStatuses.isEmpty {
-            result = result.filter { selectedStatuses.contains($0.status) }
+        } else {
+            result = allProducts.filter { selectedCategories.contains($0.category) }
         }
 
         switch sortOption {
@@ -94,9 +89,6 @@ struct CatalogView: View {
             case .sort:
                 SortSheet(selected: $sortOption)
                     .presentationDetents([.height(280)])
-            case .filter:
-                FilterSheet(selectedStatuses: $selectedStatuses)
-                    .presentationDetents([.medium, .large])
             case nil:
                 EmptyView()
             }
@@ -113,27 +105,16 @@ struct CatalogView: View {
                     activeSheet = .sort
                 }
 
-                ZStack(alignment: .topTrailing) {
-                    FilterChip(title: "Filter", isSelected: !selectedStatuses.isEmpty) {
-                        activeSheet = .filter
-                    }
-                    if !selectedStatuses.isEmpty {
-                        Circle()
-                            .fill(Color.accentColor)
-                            .frame(width: 8, height: 8)
-                            .offset(x: 4, y: -4)
-                    }
-                }
-
-                FilterChip(title: "All", isSelected: selectedCategory == nil) {
-                    selectedCategory = nil
-                }
                 ForEach(Category.allCases, id: \.rawValue) { category in
                     FilterChip(
                         title: category.categoryDisplayName,
-                        isSelected: selectedCategory == category
+                        isSelected: selectedCategories.contains(category)
                     ) {
-                        selectedCategory = selectedCategory == category ? nil : category
+                        if selectedCategories.contains(category) {
+                            selectedCategories.remove(category)
+                        } else {
+                            selectedCategories.insert(category)
+                        }
                     }
                 }
             }
@@ -145,5 +126,4 @@ struct CatalogView: View {
 private enum ActiveSheet {
     case product(any ProductDisplayable)
     case sort
-    case filter
 }
