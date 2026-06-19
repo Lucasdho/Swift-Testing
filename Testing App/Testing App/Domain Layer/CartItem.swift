@@ -18,7 +18,7 @@ final class CartItem {
     var quantity: Int
     var addedAt: Date
 
-    var product: (any ProductDisplayable)? { painting ?? sculpture ?? ceramic ?? jewelry ?? cloth }
+    var product: (any ProductDisplayable)! { painting ?? sculpture ?? ceramic ?? jewelry ?? cloth }
 
     init(painting: Painting, quantity: Int = 1) {
         self.id = UUID().uuidString; self.painting = painting; self.quantity = quantity; self.addedAt = .now

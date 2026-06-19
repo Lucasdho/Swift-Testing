@@ -70,4 +70,22 @@ final class DIContainer {
             try? FileManager.default.removeItem(at: item)
         }
     }
+
+#if DEBUG
+    /// Preview-only initialiser — accepts a pre-built `PersistenceStack` (e.g. in-memory).
+    /// Throws if any repository cannot be initialised from the given stack.
+    /// Not available in release builds.
+    init(stack: PersistenceStack) throws {
+        self.stack = stack
+        cart = try CartRepository(stack: stack)
+        paintings = try PaintingRepository(stack: stack)
+        sculptures = try SculptureRepository(stack: stack)
+        ceramics = try CeramicRepository(stack: stack)
+        jewelry = try JewelryRepository(stack: stack)
+        cloths = try ClothRepository(stack: stack)
+        engagement = try EngagementRepository(stack: stack)
+        resetOccurred = false
+    }
+#endif
 }
+

@@ -53,3 +53,13 @@ extension ProductDisplayable {
     var effectivePrice: Decimal { salePrice ?? price }
     var isOnSale: Bool { status == .onSale && salePrice != nil }
 }
+
+#if DEBUG
+extension ProductDisplayable {
+    /// Override in each conforming type to provide a lightweight mock for SwiftUI Previews.
+    /// Each concrete type's mock is defined in `DomainModels+Mock.swift`.
+    static var mock: Self {
+        fatalError("\(Self.self) must override ProductDisplayable.mock in DomainModels+Mock.swift")
+    }
+}
+#endif

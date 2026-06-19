@@ -3,10 +3,11 @@ import SwiftData
 
 struct CartToolbarButton: View {
     @Query private var cartItems: [CartItem]
+    @Environment(DIContainer.self) private var di
 
     var body: some View {
         NavigationLink {
-            CartView()
+            CartView(repository: di.cart)
         } label: {
             Image(systemName: "cart")
                 .overlay(alignment: .topTrailing) {
