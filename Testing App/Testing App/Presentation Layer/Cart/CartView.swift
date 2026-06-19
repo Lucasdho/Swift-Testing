@@ -27,21 +27,18 @@ struct CartView: View {
         ZStack(alignment: .bottom) {
             List {
                 ForEach(items) { item in
-                    if let product = item.product {
-                        CartItemRow(
-                            item: item,
-                            onDecrement: { viewModel.decrement(item) },
-                            onIncrement: { viewModel.increment(item) }
-                        )
-                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-                        .listRowSeparatorTint(Color(.separator))
-                    }
+                    CartItemRow(
+                        item: item,
+                        onDecrement: { viewModel.decrement(item) },
+                        onIncrement: { viewModel.increment(item) }
+                    )
+                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                    .listRowSeparatorTint(Color(.separator))
                 }
                 .onDelete { offsets in
                     viewModel.delete(at: offsets, in: items)
                 }
 
-                // Spacer row so the sticky bar never covers the last item
                 Color.clear
                     .frame(height: 200)
                     .listRowBackground(Color.clear)

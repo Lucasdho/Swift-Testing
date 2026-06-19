@@ -30,7 +30,7 @@ struct CartItemRow: View {
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                         
-                        Text("-")
+                        Text("•")
                             .font(.system(size: 13, weight: .regular))
                             .foregroundStyle(Color(.tertiaryLabel))
                     }
@@ -40,13 +40,11 @@ struct CartItemRow: View {
                         .foregroundStyle(Color(.tertiaryLabel))
                 }
 
-                Spacer(minLength: 4)
-
                 HStack {
                     PriceView(
                         price: product.price,
                         salePrice: product.salePrice,
-                        size: 15,
+                        size: 13,
                         regularWeight: .semibold
                     )
 
@@ -54,6 +52,7 @@ struct CartItemRow: View {
 
                     quantityStepper
                 }
+                .padding(.top, 6)
             }
         }
         .padding(.vertical, 12)
