@@ -12,6 +12,7 @@ struct CatalogView: View {
     @State private var selectedCategories: Set<Category> = []
     @State private var sortOption: SortOption = .none
     @State private var activeSheet: ActiveSheet?
+    @State private var search = SearchService()
 
     private var allProducts: [any ProductDisplayable] {
         paintings + sculptures + ceramics + jewelry + cloths
@@ -27,6 +28,12 @@ struct CatalogView: View {
             result = allProducts
         } else {
             result = allProducts.filter { selectedCategories.contains($0.category) }
+        }
+
+        if !search.searchText.isEmpty {
+            result = result.filter {
+                search.matches(search.searchText, in: "\($0.name) \($0.productDescription)")
+            }
         }
 
         switch sortOption {
@@ -65,9 +72,6 @@ struct CatalogView: View {
                             .padding(.top, 16)
                         }
                     }
-                    // Animate layout changes whenever the visible product IDs change
-                    // (filter toggle, sort change). Using .map(\.id) avoids requiring
-                    // Equatable conformance on `any ProductDisplayable`.
                     .animation(.snappy, value: filteredAndSortedProducts.map(\.id))
                 }
             }
@@ -108,8 +112,6 @@ struct CatalogView: View {
                 }
                 .buttonStyle(.plain)
                 .contentShape(Rectangle())
-                // Scale + fade transition applied per item so that cards animate
-                // individually when they enter or leave the column.
                 .transition(.scale(scale: 0.9).combined(with: .opacity))
             }
         }
