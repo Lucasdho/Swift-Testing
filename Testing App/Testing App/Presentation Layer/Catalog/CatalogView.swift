@@ -78,6 +78,7 @@ struct CatalogView: View {
         }
         .navigationTitle("Store")
         .navigationBarTitleDisplayMode(.inline)
+        .productSearch(service: search)
         .sheet(isPresented: Binding(
             get: { activeSheet != nil },
             set: { if !$0 { activeSheet = nil } }

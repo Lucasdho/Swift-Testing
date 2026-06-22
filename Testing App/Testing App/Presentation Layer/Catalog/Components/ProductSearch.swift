@@ -92,3 +92,11 @@ private struct ProductSearchModifier: ViewModifier {
             }
     }
 }
+
+// MARK: - View extension
+
+extension View {
+    func productSearch(service: SearchService) -> some View {
+        modifier(ProductSearchModifier(service: service))
+    }
+}
